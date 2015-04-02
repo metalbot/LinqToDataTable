@@ -1,7 +1,4 @@
-﻿using System;
-using System.Data;
-using System.Collections.Generic;
-using System.Reflection;
+﻿using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using LinqToDataTable;
 
