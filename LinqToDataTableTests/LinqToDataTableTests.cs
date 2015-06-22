@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using LinqToDataTable;
+using System.Linq;
 
 namespace LinqToDataTableTests
 {
@@ -84,6 +85,40 @@ namespace LinqToDataTableTests
 
             Assert.AreEqual(0, table.Columns.Count);
             Assert.AreEqual(2, table.Rows.Count);
+        }
+
+        [TestMethod]
+        public void WithNullableProperty()
+        {
+            var aList = new List<NullableProperty> { new NullableProperty { Foo = 1 } };
+            var table = aList.ToDataTable();
+
+            Assert.AreEqual(1, table.Columns.Count);
+            Assert.AreEqual("Foo", table.Columns[0].ColumnName);
+            Assert.AreEqual(1, table.Rows.Count);
+            Assert.AreEqual(1, table.Rows[0][0]);
+        }
+
+        [TestMethod]
+        public void WithNullRow()
+        {
+            var aList = new List<TwoProperties> { 
+                new TwoProperties { Foo=1, AString="One"},
+                null
+            };
+
+            var table = aList.ToDataTable();
+            Assert.AreEqual(1, table.Rows.Count);
+        }
+
+        [TestMethod]
+        public void OnNullList()
+        {
+            List<TwoProperties> aList = null;
+
+            var table = aList.ToDataTable();
+
+            Assert.IsNull(table);
         }
     }
 
