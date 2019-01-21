@@ -1,4 +1,5 @@
-﻿namespace LinqToDataTableTests
+﻿using System;
+namespace LinqToDataTableTests
 {
     public class TwoProperties
     {
@@ -11,5 +12,10 @@
         public void Foo()
         {
         }
+    }
+
+    public class NullableProperty
+    {
+        public Nullable<int> Foo {get; set;}
     }
 }

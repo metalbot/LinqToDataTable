@@ -1,35 +1,44 @@
-﻿using System;
+﻿#region Using
+
+using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Reflection;
 
-
+#endregion
 
 namespace LinqToDataTable
 {
     public static class LinqToDataTable
     {
-        public static DataTable ToDataTable<T>(this IEnumerable<T> data, Func<PropertyInfo, bool> filter =  null)
+        public static DataTable ToDataTable<T>(this IEnumerable<T> data, Func<PropertyInfo, bool> filter = null)
         {
-            var properties = (typeof (T)).GetProperties();
-            
-            
+            if (data == null) return null;
+            PropertyInfo[] properties = (typeof (T)).GetProperties();
+
             using (var table = new DataTable())
             {
-                long propertyCount = properties.Length;
                 var actualColumns = 0;
                 var selectedProperties = new List<PropertyInfo>();
 
-                foreach (var property in properties)
+                foreach (PropertyInfo property in properties)
                 {
                     if (filter != null && !filter(property)) continue;
-                    table.Columns.Add(property.Name, property.PropertyType);
+                    Type propertyType = property.PropertyType;
+
+                    if ((propertyType.IsGenericType) && (propertyType.GetGenericTypeDefinition() == typeof (Nullable<>)))
+                    {
+                        propertyType = propertyType.GetGenericArguments()[0];
+                    }
+
+                    table.Columns.Add(property.Name, propertyType);
                     actualColumns++;
                     selectedProperties.Add(property);
                 }
 
                 var values = new object[actualColumns];
-                foreach (var item in data)
+                foreach (T item in data.Where(item => item != null))
                 {
                     for (var i = 0; i < values.Length; ++i)
                     {
